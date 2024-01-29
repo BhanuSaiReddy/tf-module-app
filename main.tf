@@ -64,6 +64,6 @@ resource "aws_route53_record" "main" {
   name    = "${var.component}-${var.env}"
   type    = "CNAME"
   ttl     = 30
-  records = [var.alb_name]
+  records = var.alb_name != null ? [var.alb_name] : []
 }
 

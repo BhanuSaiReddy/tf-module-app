@@ -101,15 +101,13 @@ resource "aws_lb_target_group" "public" {
 }
 
 resource "aws_lb_target_group_attachment" "public" {
-  for_each = var.component == "frontend" ? toset(data.dns_a_record_set.private_alb.addrs) : toset([])
-
+  count             = var.component == "frontend" ? length(tolist(data.dns_a_record_set.private_alb.addrs)) : 0
   target_group_arn  = aws_lb_target_group.public[0].arn
-  target_id         = each.value
+  target_id         = element(tolist(data.dns_a_record_set.private_alb.addrs), count.index)
   port              = 80
-  availability_zone = "all"
+    availability_zone = "all"
+
 }
-
-
 
 resource "aws_lb_listener_rule" "public" {
   count = var.component == "frontend" ? 1 : 0

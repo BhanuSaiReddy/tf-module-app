@@ -101,13 +101,14 @@ resource "aws_lb_target_group" "public" {
 }
 
 resource "aws_lb_target_group_attachment" "public" {
-  for_each = var.component == "frontend" ? toset(data.dns_a_record_set.private_alb.addrs) : {}
+  for_each = var.component == "frontend" ? toset(data.dns_a_record_set.private_alb.addrs) : toset([])
 
   target_group_arn  = aws_lb_target_group.public[0].arn
   target_id         = each.value
   port              = 80
   availability_zone = "all"
 }
+
 
 
 resource "aws_lb_listener_rule" "public" {
